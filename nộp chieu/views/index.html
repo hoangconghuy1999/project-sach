@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous">
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+    <div class="background">
+        <input id="email" type="text " placeholder=email>
+        <hr>
+        <input id="username" type="text " placeholder=username>
+        <hr>
+        <input id="password" type="text " placeholder=password>
+        <hr>
+        <button type="button" id="btn">Dang ky</button>
+
+    </div>
+
+</body>
+
+<script>
+    $("button").click(() => {
+        var email = $("#email").val()
+        var username = $("#username").val()
+        var password = $("#password ").val()
+
+        $.ajax({
+            // roles: "/admin/",
+
+            url: "/user/sign-up",
+            method: "POST",
+            data: {
+                email: email,
+                username: username,
+                password: password
+            }
+
+        }).then((data) => {
+            console.log(data)
+            if (!data.error) {
+                alert("tạo tài khoản thành công")
+                return window.location.href = "/login"
+
+            }
+            alert("email này đã tồn tại")
+        }).catch((err) => {
+            console.log(err);
+            alert(err)
+        });
+    })
+</script>
+
+</html>

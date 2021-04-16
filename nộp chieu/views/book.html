@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous">
+    </script>
+</head>
+
+<body>
+    <h2><button id=sau-information>thông tin của bạn</button></h2>
+    <div id=sau-dataUser>
+        <table class="table table-sm table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">stt</th>
+                    <th scope="col">id</th>
+                    <th scope="col">email</th>
+                    <th scope="col">username</th>
+                    <th scope="col">password</th>
+
+                    <th scope="col">thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="email" type="text" placeholder=email>
+                        <input id="username" type="text" placeholder=username>
+                        <input id="phone" type="text" placeholder=phone>
+                        <input id="school" type="text" placeholder=school>
+                        <input id="password" type="text" placeholder=password>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onClick="saveUser()">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h2><button>sách</button></h2>
+</body>
+<script>
+    $("#sau-information").click(() => {
+        $("#sau-dataUser")
+        $.ajax({
+            // roles: "/admin/",
+            url: "/user/sign-up",
+            method: "GET",
+
+
+        })
+    })
+</script>
+
+</html>

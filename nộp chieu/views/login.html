@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous">
+    </script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js" integrity="sha384-KsvD1yqQ1/1+IA7gi3P0tyJcT3vR+NdBTt13hSJ2lnve8agRGXTTyNaBYmCR/Nwi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="mx-auto mt-5" style="width: 300px;">
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">@</span>
+            <input id="email" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="addon-wrapping">
+        </div>
+        <!-- <input id="email" type="text" placeholder=email> -->
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">@</span>
+            <input id="password" type="password" name="psw" class="form-control" placeholder="password" aria-label="password" aria-describedby="addon-wrapping">
+            <p><input type="radio" name="abc" value="hien" checked> Hiện</p>
+            <p><input type="radio" name="abc" value="an"> Ẩn</p>
+        </div>
+        <!-- <input id="password" type="text" placeholder=password> -->
+        <div class="btn-group" id="btn">
+            <a href="#" class="btn btn-primary active" aria-current="page">đăng nhập</a>
+
+        </div>
+        <!-- <button id="btn">đăng nhập</button> -->
+        <div class="btn-group">
+            <a href="#" id="sign-up" class="btn btn-primary active " aria-current="page">dang ky</a>
+
+        </div>
+        <!-- <button id="sign-up">dang ky</button> -->
+
+    </div>
+</body>
+<script>
+    $("#btn").click(() => {
+        var email = $("#email").val()
+        var password = $("#password").val()
+        if (email && password) {
+            return $.ajax({
+                url: "/user/login",
+                method: "POST",
+                data: {
+                    email: email,
+                    password: password
+                }
+            }).then((data) => {
+                if (!data.error) {
+                    alert("ddawng nhaapj thành công")
+                    setCookie("token", data.token, 1)
+                    return window.location.href = "/home"
+                }
+                alert("sai taif khoan hoawc mat khau")
+
+                if (confirm("banj cos muoons dang ky") == true) {
+                    return window.location.href = "/index"
+                }
+
+            }).catch((err) => {
+                alert(err)
+            });
+
+            function setCookie(cname, cvalue, exdays) {
+                var d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                var expires = "expires=" + d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+            }
+        }
+        return alert("khoong duoc de trong")
+
+    })
+    $("#sign-up").click(() => {
+        window.location.href = "/sign-up"
+    })
+
+    // $("#btn-cookie").click(function() {
+    //     var token = getCookie("token");
+    //     console.log("token: " + token);
+    //     $.ajax({
+    //         url: "/user/decode?token=" + token,
+    //         method: "GET",
+    //     }).then((data) => {
+    //         console.log(data + "kk");
+    //     }).catch((err) => {
+
+    //     });
+    // })
+
+
+
+    // function getCookie(cname) {
+    //     var name = cname + "=";
+    //     var decodedCookie = decodeURIComponent(document.cookie);
+    //     var ca = decodedCookie.split(';');
+    //     for (var i = 0; i < ca.length; i++) {
+    //         var c = ca[i];
+    //         while (c.charAt(0) == ' ') {
+    //             c = c.substring(1);
+    //         }
+    //         if (c.indexOf(name) == 0) {
+    //             return c.substring(name.length, c.length);
+    //         }
+    //     }
+    //     return "";
+    // }
+</script>
+
+</html>

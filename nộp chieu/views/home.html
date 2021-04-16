@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html class="html-home" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous">
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+    <!-- <link rel="stylesheet" href="/css/home.css"> -->
+
+</head>
+
+<body>
+    <h1 style="width: 100%;;background-color: dimgray;">ADMIN
+        <b id="btn-log-out" style="font-size: 30px;margin-left: 70%;">đăng suất</b>
+    </h1>
+    <button id="saudata-user">sâu dữ liệu người dùng</button>
+    <table class="table table-sm table-dark">
+        <thead>
+            <tr>
+                <th scope="col">stt</th>
+                <th scope="col">id</th>
+                <th scope="col">email</th>
+                <th scope="col">username</th>
+                <th scope="col">password</th>
+
+                <th scope="col">thao tác</th>
+            </tr>
+        </thead>
+        <tbody id="data-user">
+
+        </tbody>
+    </table>
+    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                </div>
+                <div class="modal-body">
+                    <input id="email" type="text" placeholder=email>
+                    <input id="username" type="text" placeholder=username>
+                    <!-- <input id="phone" type="text" placeholder=phone>
+                    <input id="school" type="text" placeholder=school> -->
+                    <input id="password" type="text" placeholder=password>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onClick="saveUser()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <button id="newbook">TAO SACH MOI</button> -->
+    <div class="modal fade" id="modalAddBook" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tạo mới Book</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table>
+                        <tr>
+                            <td>
+                                Email:
+                            </td>
+                            <td>
+                                <input id="add-email-book" class="input-text" type="text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Name:
+                            </td>
+                            <td>
+                                <input id="add-name-book" class="input-text" type="text">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="button" id="add-book" class="btn btn-primary" data-dismiss="modal" onclick="doneAddBook()">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button id="saudata-book">dữ liệu book</button>
+    <table class="table table-sm table-dark">
+        <thead>
+            <tr>
+                <th scope="col">stt</th>
+                <th scope="col">id</th>
+                <th scope="col">name</th>
+                <th scope="col">email</th>
+                
+            </tr>
+        </thead>
+        <tbody id="data-book">
+
+        </tbody>
+    </table>
+    <div class="modal fade" id="editUserModalbook" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                </div>
+                <div class="modal-body-book">
+                    <input id="name-book" type="text" placeholder=name>
+                    <input id="email-book" type="text" placeholder=email>
+
+
+                    <!-- <input id="password" type="text" placeholder=password> -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onClick="savebook()">Save changes +2</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+<script src="/js/home.js"></script>
+
+</html>

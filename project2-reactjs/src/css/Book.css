@@ -1,0 +1,33 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.table-w100{
+    width: 100%;
+}
+.stt-w10{
+    width: 5%;
+}
+.id-w10{
+ width: 10%;
+}
+.name-w20{
+     width: 20%;
+}
+.email-w30{
+    width: 40%;
+}
+.name-book{
+    width: 30%;
+    margin: 20px 30%;
+}
+.ok-button{
+    width: 30%;
+    margin: 5px 30%;
+}
+.div-tong{
+    width: 100%;
+  
+}
+

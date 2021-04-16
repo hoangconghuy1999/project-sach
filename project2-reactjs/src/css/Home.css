@@ -1,0 +1,42 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+tr{
+    width: 50px;
+    border: 1px solid;
+    
+}
+td{
+    width: 70px;
+    border: 1px solid;
+    /* display: flex !important; */
+}
+.option-home{
+    width: 150px;
+    display: flex !important;
+    
+}
+.delete-width{
+    width: 50px;
+    margin: 0 !important;
+    background-color: aquamarine;
+}
+.put-magin{
+width: 100% !important;
+padding: 0 !important;
+margin: 0  !important;
+background-color: aquamarine;
+color: black;
+}
+.dislay-block-node{
+    /* display:none ; */
+}
+.showModal-put{
+    width: 70px !important;
+    margin: 0 !important;
+   padding: 0 !important;
+   background-color: aquamarine;
+    
+}
