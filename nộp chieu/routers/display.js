@@ -18,4 +18,8 @@ router.get('/home', (req, res) => {
 router.get('/detail/:id', (req, res) => {
     res.sendFile(path.join(__dirname, "../views/detail.html"))
 })
+router.get('/upload', (req, res) => {
+    res.sendFile(path.join(__dirname, "../views/upload.html"))
+})
+
 module.exports = router

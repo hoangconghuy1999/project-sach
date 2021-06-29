@@ -20,11 +20,11 @@ function checkAuthEmail(req, res, next) {
 function checkAuthor(req, res, next) {
     try {
         var token = req.params.token || req.headers.authorization.split("Bearer ")[1]
-        var decode = jwt.verify(token, "nodemy")
-       
+        console.log(token,23)
+        var decode = jwt.verify(token, "nodemy")     
+        console.log(decode,"ok") 
         userServies.getUserID(decode._id)
         .then((data) => {
-            
             if(data.roles === "user") {
                 req.author = 0
                 req.id = decode._id
@@ -61,8 +61,8 @@ function checkAuthor(req, res, next) {
             })
         }
         return res.json({
-            err: true,
-            message: "lỗi input 1 :" + error,
+            error: true,
+            message: "lỗi input 12 :" + error,
         })
     }
 }
@@ -93,8 +93,19 @@ function checkBook(req, res, next) {
         })
     }
 }
+function search(query){
+   return function (element){
+    for(key in query){
+       if(query[i]!=element[i]){
+           return false;
+       }
+    }
+    return true
+ }
+}
 module.exports = {
     checkAuthEmail,
     checkAuthor,
-    checkBook
+    checkBook,
+    search
 }

@@ -4,6 +4,7 @@ var schema = mongoose.Schema
 let userbook = new Schema({
     name: String,
     email: String,
+    img:String
     // user:
     // {type: String,
     // ref: user}

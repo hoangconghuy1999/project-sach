@@ -5,7 +5,11 @@ function getBook() {
     return userbookExports.find()
         // hàm hiển thị tất cả dữ liệu 
 }
-
+function getBookSearch(name) {
+    return userbookExports.find({
+        name:name
+    })        // hàm hiển thị theo name
+}
 function getBookID(id) {
     // console.log(id)
     return userbookExports.findOne({
@@ -76,5 +80,6 @@ module.exports = {
     existsBookId: existsBookId,
     existsSignUp: existsSignUp,
     existsLogin: existsLogin,
-    deleteBookEmail:deleteBookEmail
+    deleteBookEmail:deleteBookEmail,
+    getBookSearch
 }

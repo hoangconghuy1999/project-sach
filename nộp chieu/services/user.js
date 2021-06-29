@@ -63,9 +63,19 @@ function updateUser(data1, data2) {
 }
 
 function deleteUser(data) {
+   
     return userModel.deleteOne({
+        
         // hàm xóa theo id
         _id: data
+    })
+}
+function deleteUseremail(data) {
+   
+    return userModel.deleteMany({
+        
+        // hàm xóa theo email
+        email: data
     })
 }
 
@@ -81,4 +91,5 @@ module.exports = {
     existsLogin: existsLogin,
     checkEmail: checkEmail,
     getDetailUser,
+    deleteUseremail
 }

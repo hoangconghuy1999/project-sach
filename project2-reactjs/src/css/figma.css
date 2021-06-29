@@ -1,0 +1,71 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.login-tex-{
+    position: absolute;
+    left: 39.84%;
+    right: 39.79%;
+    top: 27.78%;
+    bottom: 68.33%;
+    
+    font-family: SF Pro Text;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 16px;
+    /* or 67% */
+    
+    display: flex;
+    align-items: center;
+    text-align: center;
+    
+    
+    
+}
+.otp{
+    left: 39.84%;
+}
+.background-black{
+    
+}
+.sao1{
+    /* position: absolute; */
+left: 45%;
+/* right: 53.59%;
+top: 33.52%;
+bottom: 61.85%;
+
+font-family: SF Pro Text;
+font-style: normal;
+font-weight: 500;
+font-size: 36px;
+line-height: 16px; */
+/* or 44% */
+
+/* display: flex;
+align-items: center;
+text-align: center; */
+
+
+
+}
+.tex-login-sao2{
+    position: absolute;
+left: 47.86%;
+right: 50.73%;
+top: 33.52%;
+bottom: 61.85%;
+
+font-family: SF Pro Text;
+font-style: normal;
+font-weight: 500;
+font-size: 36px;
+line-height: 16px;
+/* or 44% */
+
+display: flex;
+align-items: center;
+text-align: center;
+}

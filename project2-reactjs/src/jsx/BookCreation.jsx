@@ -4,24 +4,28 @@ import { useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import "../css/Book.css";
-import { Pagination } from 'antd';
+import { Pagination } from "antd";
 function BookCreation() {
   let [name, setbookTitle] = useState("");
+  let [img, setimg] = useState("");
+  console.log(img)
   let token = Cookies.get("token", { expires: 2 });
+  console.log(token._id,11)
   let [listUser, setListUser] = useState([]);
   let [showBook, setShowBook] = useState([]);
   let [userbook, setuserbook] = useState({});
   let [pageSize, setPageSize] = useState(3);
-    let [isModalVisible, setIsModalVisible] = useState(false);
-  
+  let [page, setpage] = useState(1);
+  let [isModalVisible, setIsModalVisible] = useState(false);
+
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   const handleOk = (_id) => {
-    console.log(_id,22)
-    bookput(userbook._id)
-    console.log(23,userbook._id)
+    console.log(_id, 22);
+    bookput(userbook._id);
+    console.log(23, userbook._id);
     setIsModalVisible(false);
   };
 
@@ -31,72 +35,96 @@ function BookCreation() {
   let [nameUpdate, setnameUpdate] = useState("");
   let [email, setemail] = useState("");
   let ModalUpdate = (
-      <Modal
-          title="Basic Modal"
-          visible={isModalVisible}
-          onOk={function(){
-            handleOk(userbook._id)
-            // console.log(listUser)
-            bookput(userbook._id)
-            console.log(userbook._id,40)
-          }}          
-          onCancel={handleCancel}
-        >
-          <input placeholder="name" onChange={(e)=>{
-               setnameUpdate(e.target.value);
-               console.log(nameUpdate)
-          }}></input>
-          <input placeholder="email" onChange={(e)=>{
-               setemail(e.target.value);
-          }}></input>
-         
-      </Modal> 
-  )   
-  async function bookput(id){
-    console.log(56,id)
-    let response =await axios ({
+    <Modal
+      title="Basic Modal"
+      visible={isModalVisible}
+      onOk={function () {
+        handleOk(userbook._id);
+        // console.log(listUser)
+        bookput(userbook._id);
+        console.log(userbook._id, 40);
+      }}
+      onCancel={handleCancel}
+    >
+      <input
+        placeholder="name"
+        onChange={(e) => {
+          setnameUpdate(e.target.value);
+          console.log(nameUpdate);
+        }}
+      ></input>
+      <input
+        placeholder="email"
+        onChange={(e) => {
+          setemail(e.target.value);
+        }}
+      ></input>
+    </Modal>
+  );
+  async function bookput(id) {
+    console.log(56, id);
+    let response = await axios({
       method: "PUT",
-      url: "http://localhost:1999/book/" + id + "/" + token,
-      data:{
-        name:nameUpdate,
-        email:email,
-      }      
+      url: "http://localhost:1999/book/" + id + "/",
+      headers: { Authorization: "Bearer " + token },
+      data: {
+        name: nameUpdate,
+        email: email,
+      },
     });
-     console.log(response)
-  } 
-  let changePage = (page,size)=>{
-    if(size !== pageSize){
-      setPageSize(size)
-      page=1
-    }
-    var newData = listUser.slice((page-1)*size,page*size)
-    
-    setShowBook(newData)
+    console.log(response);
   }
+  let changePage = (page, size) => {
+    if (size !== pageSize) {
+      setPageSize(size);
+      page = 1;
+    }
+
+    setpage(page);
+    var newData = listUser.slice((page - 1) * size, page * size);
+
+    setShowBook(newData);
+  };
+  // console.log(page, 80);
+  let x = (page - 1) * pageSize + 1;
   return (
     <div className="div-tong">
-      
       <input
         className="name-book"
         type="text"
-        placeholder="tên sách"
+        placeholder="tên sách bạn muốn tạo"
         onChange={(e) => {
           setbookTitle(e.target.value);
         }}
       />
-      <br />      
-        
+      <input type="text" placeholder="img"
+      onChange={(e)=>{
+          setimg(e.target.value);
+      }} />
+      <form action="http://localhost:1999/user/uploadfile" enctype="multipart/form-data" method="post">
+        <input type="file" id="myfile" name="myFile" /><br />
+        <input type="submit"  />
+      </form>
+      <br />
+      <select name="" id="">
+        <option value="">1</option>
+        <option value="">2</option>
+      </select>
+
       <button
         className="ok-button"
         onClick={async () => {
           try {
             console.log(localStorage.getItem("email"));
+            console.log(token, 105);
             let response = await axios({
               method: "POST",
-              url: "http://localhost:1999/book/" + token,
+              url: "http://localhost:1999/book/",
+              headers: { Authorization: "Bearer " + token },
               data: {
                 name: name,
                 email: localStorage.getItem("email"),
+                img:img,
               },
             });
             if (response.status === 200) {
@@ -113,17 +141,16 @@ function BookCreation() {
           try {
             let response = await axios({
               method: "GET",
-              url: "http://localhost:1999/book/" + token,
+              url: "http://localhost:1999/book/",
+              headers: { Authorization: "Bearer " + token },
             });
 
             if (response.status === 200) {
               setListUser(response.data.value);
 
-              setShowBook(response.data.value.slice(0,pageSize))
+              setShowBook(response.data.value.slice(0, pageSize));
             }
-          } catch (error) {
-           
-          }
+          } catch (error) {}
         }}
       >
         sách đã tạo
@@ -142,7 +169,7 @@ function BookCreation() {
             ? showBook.map((bookItem, index) => {
                 return (
                   <tr key={index}>
-                    <td>{index + 1}</td>
+                    <td>{x++}</td>
                     <td>{bookItem._id}</td>
                     <td>{bookItem.name}</td>
                     <td>{bookItem.email}</td>
@@ -155,8 +182,8 @@ function BookCreation() {
                               url:
                                 "http://localhost:1999/book/" +
                                 bookItem._id +
-                                "/" +
-                                token,
+                                "/",
+                              headers: { Authorization: "Bearer " + token },
                             });
 
                             if (response.status === 200) {
@@ -170,33 +197,43 @@ function BookCreation() {
                       >
                         xóa
                       </button>
-                      <Button type="primary" onClick={()=>{
-                                 showModal()
-                                 setuserbook(bookItem)
-                                 bookput(bookItem._id)
-                      }                           
-                      }>
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          showModal();
+                          setuserbook(bookItem);
+                          bookput(bookItem._id);
+                        }}
+                      >
                         cập nhật
                       </Button>
-                      <button onClick={()=>{
-                        localStorage.setItem('id', bookItem._id); 
-                           return window. location.href="DetailUser"
-                      }                        
-                      }>xem chi tiết</button>
-                    </td>                    
-                  </tr>                  
+                      <button
+                        onClick={() => {
+                          localStorage.setItem("id", bookItem._id);
+                          return (window.location.href = "DetailUser");
+                        }}
+                      >
+                        xem chi tiết
+                      </button>
+                    </td>
+                  </tr>
                 );
               })
-            : null}           
+            : null}
         </table>
-        <Pagination defaultCurrent={1} total={listUser.length} 
-                    defaultpageSize={5}
-                    onChange={changePage}
-                    pageSize={pageSize}
-                    showSizeChanger={true}
-                    pageSizeOptions={[3,6,9,11]}
-        />      
+        <Pagination
+          defaultCurrent={1}
+          total={listUser.length}
+          defaultpageSize={5}
+          onChange={changePage}
+          pageSize={pageSize}
+          showSizeChanger={true}
+          pageSizeOptions={[3, 6, 9, listUser.length]}
+        />
       </div>
+      {/* { !user.role || user.role === 'user'? null :
+      <b>nhớ mãi</b>
+      } */}
     </div>
   );
 }

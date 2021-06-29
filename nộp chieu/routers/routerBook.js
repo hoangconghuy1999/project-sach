@@ -11,8 +11,10 @@ const saltRounds = 10;
 var jwt = require('jsonwebtoken');
 const { json } = require("body-parser");
 const { route } = require("./userRouter");
+var multer  = require('multer');
+const { query } = require("express");
 
-router.get("/:token", checkAuth.checkAuthor,(req, res) =>{
+router.get("/", checkAuth.checkAuthor,(req, res) =>{
     try {
         if (req.author) {
 
@@ -98,7 +100,7 @@ router.get("/:token", checkAuth.checkAuthor,(req, res) =>{
 //             })
 //         };
 
-router.get("/:id/:token",checkAuth.checkAuthor,(req,res)=>{
+router.get("/:id/",checkAuth.checkAuthor,(req,res)=>{
       try{
            var id =req.params.id;
            userConBook
@@ -126,17 +128,17 @@ router.get("/:id/:token",checkAuth.checkAuthor,(req,res)=>{
       }
 })
 
-router.post("/:token", checkAuth.checkAuthor,checkAuth.checkBook, function(req, res) {
+router.post("/", checkAuth.checkAuthor,checkAuth.checkBook, function(req, res) {
         // var token = jwt.sign({ _id: userConBook._id }, "nodemy", { expiresIn: "1d" });
     try{
         var email = req.email || req.body.email;
         var name = req.body.name;
+        var img = req.body.img
         var obj = {
             name: name,
-            email: email
-        }
-        
-        
+            email: email,
+            img:img
+        }        
         userConBook
             .createBook(obj)
 
@@ -146,13 +148,11 @@ router.post("/:token", checkAuth.checkAuthor,checkAuth.checkBook, function(req, 
                 message: "đăng kí thành công ",
                 value: data,
                 // token: token,
-               
-
             })
         }).catch((err) => {
             return res.json({
                 err: true,
-                message: "đăng kí không thành công i"
+                message: "đăng kí không thành công i"+ err
             })
         })
     }catch(err){
@@ -164,7 +164,7 @@ router.post("/:token", checkAuth.checkAuthor,checkAuth.checkBook, function(req, 
 
 })
 
-router.put("/:id/:token",checkAuth.checkAuthor, (req, res) => {
+router.put("/:id/",checkAuth.checkAuthor, (req, res) => {
     try {
         var body = {};
         var id = req.params.id;       
@@ -203,7 +203,7 @@ router.put("/:id/:token",checkAuth.checkAuthor, (req, res) => {
 });
 
 // xóa tất cả book theo email bằng token
-router.delete("/:token",checkAuth.checkAuthor,(req,res)=>{
+router.delete("/",checkAuth.checkAuthor,(req,res)=>{
     try{
        var email = req.body.email
         userConBook.deleteBookEmail(email)
@@ -225,7 +225,7 @@ router.delete("/:token",checkAuth.checkAuthor,(req,res)=>{
         })
     }
 })
-router.delete("/:id/:token",checkAuth.checkAuthor,(req,res)=>{
+router.delete("/:id/",checkAuth.checkAuthor,(req,res)=>{
     try{
        var id = req.params.id
         userConBook.deleteBook(id)
@@ -247,5 +247,88 @@ router.delete("/:id/:token",checkAuth.checkAuthor,(req,res)=>{
         })
     }
 })
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads')
+    },
+    filename: function (req, file, cb) {
+      cb(null,  Date.now()+ '-' + file.originalname)
+    }
+  })
+   
+  var upload = multer({ storage: storage })
 
+router.post('/uploadfile',upload.single('myFile'),async (req, res, next)=>{
+try {
+  var data =req.body
+  console.log('ok');
+  console.log(req.file);
+  return res.redirect('http://localhost:3000/BookCreation')
+  return res.status(500).json({
+      data:'thành công  '
+  })
+  return
+  if(!data.name){
+    return res.status(500).json(sendError(CHECK_INPUT))
+  }
+  if(req.file){
+    data.file = req.file
+    var dev = process.env.NODE_ENV === "production" ?  process.env.HOST_DOMAIN : process.env.HOST_DOMAIN_DEV 
+    data.avatar = `${dev}/${req.file.destination}/${req.file.filename}`
+  }
+  var feedback = await feedbackModel.createBook(data)
+  return res.status(200).json(sendSuccess(SUCCESSFULLY_ADDED_FEEDBACK, feedback))
+} catch (error) {
+    return res.status(500).json(sendError(SERVER_ERROR))
+}
+})
+// router.get('/search', function (req, res){
+//     // declare the query object to search elastic search and return only 200 results from the first result found.
+//     // also match any data where the name is like the query string sent in
+//     let body = {
+//       size: 200,
+//       from: 0,
+//       query: {
+//         match: {
+//             name: req.query['t']
+//         }
+//       }
+//     }
+//     // perform the actual search passing in the index, the search query and the type
+//     client.search({index:'scotch.io-tutorial',  body:body, type:'cities_list'})
+//     .then(results => {
+//       return  res.json(results)
+//     //   res.send(results.hits.hits);
+//     })
+//     .catch(err=>{
+//       console.log(err)
+//       res.send([]);
+//     });
+//   })
+router.get('/search/:name',function (req, res){
+    try{
+   var name =req.params.name;
+   let inputObj={$regex:`.*${name}.*`}
+   userConBook.getBookSearch(inputObj)
+        .then((data) => {
+            console.log(data,67)
+            res.json({
+                eror: false,
+                message: "hiển thị thành công ",
+                value: [data]
+            })
+        }).catch((err) => {
+            return res.json({
+                err: true,
+                message: "lỗi" + err,
+            })
+        })
+  
+    }catch(err){
+        return req.json({
+           err:"lỗi",
+           messenge:"lỗi không có sách đó"+err
+    })
+}
+});
 module.exports = router;

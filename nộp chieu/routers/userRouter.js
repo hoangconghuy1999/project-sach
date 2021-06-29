@@ -5,22 +5,34 @@ var router = express.Router();
 var userControl = require("../services/user");
 // var userConBook = require("../services/book")
 const PAGE_SIRE = 1
-
+var multer  = require('multer')
 const bcrypt = require('bcrypt');
 let checkAuth = require("../middlewares/auth")
 const saltRounds = 10;
 var jwt = require('jsonwebtoken');
 const { json } = require("body-parser");
+var {
+    DELETE_SUCCESS,
+    SUCCESSFULLY_ADDED_FEEDBACK,
+    SERVER_ERROR,
+    GET_LIST_USER,
+    UPDATE_SUCCESS,
+    CHECK_INPUT
+  } = require('../config/error');
 router.get("/page/:page/:pageSize",checkAuth.checkAuthor,(req, res) => {
     try {
-        if(req.checkAuth) {
+        if(req.author) {
+            console.log(req.author)
             let x = Number(req.params.page)
             let y = Number(req.params.pageSize)
             x = (x - 1) * y
-            return user.getUserID(req.id)
+            console.log(req.id)
+            return userControl.getUser(req.id)
+
             .skip(x)
             .limit(y)
             .then((data) => {
+            console.log(data,99)
                 res.json({
                     error: false,
                     messenge: "hiển thị chi tiết dữ liệu thành công",
@@ -58,54 +70,18 @@ router.get("/decode", (req, res) => {
         res.json(error)
     }
 });
-router.get("/:token", async function(req, res, next) {
+router.get("/", checkAuth.checkAuthor,(req, res) => {
+   
     try {
-        var token = req.params.token;
-        var decode = jwt.verify(token, "nodemy");
-        var handleUser = async() => {
-            var data = await userControl.getUserID(decode._id)
-            
-            return data
-        }
-        var data = await handleUser();
-        // .then((data) => {
-        if (data.roles === "admin") {
-            req.author = 1
-            return next()
-        }
-        if (data.roles === "user") {
-            req.author = 0
-            req.id = data._id
-            return next()
-        }
-        return res.json({
-                error: true,
-                messenge: "Bạn chưa đăng nhập",
-            })
-            // })
-            // .catch((err) => {
-            //     return res.json({
-            //         error: true,
-            //         messenge: err,
-            //     })
-            // })
+        if (req.author==0) {
 
-    } catch (error) {
-        return res.json({
-            error: "lỗi",
-            messenge: "lỗi 1:" + error,
-        })
-    }
-}, function(req, res) {
-    try {
-        if (req.author) {
-
-            return userControl.getUser()
+            return userControl.getUserID(req.id)
                 .then((data) => {
+                    console.log(data,67)
                     res.json({
                         eror: false,
                         message: "hiển thị thành coong ",
-                        value: data
+                        value: [data]
                     })
                 }).catch((err) => {
                     return res.json({
@@ -114,9 +90,10 @@ router.get("/:token", async function(req, res, next) {
                     })
                 })
         }
-        return userControl.getUserID(req.id)
+        // if(req.author==1){
+        return userControl.getUser()
             .then((data) => {
-               
+                console.log(data,82)
                 return res.json({
                     eror: false,
                     message: "hiển thị thành coong ",
@@ -128,33 +105,14 @@ router.get("/:token", async function(req, res, next) {
                     message: "lỗi" + err,
                 })
             })
+        // }
 
     } catch (error) {
-        res.json(131,error)
+        res.json(error)
     }
-});
-
-router.get("/:id/:token", function(req, res, next) {
-        try {
-            var token = req.params.token;
-            var decode = jwt.verify(token, "nodemy");
-            userControl.getUserID(decode._id).then((user) => {
-                if (user._id === req.params._id || user.roles === "admin") {
-                    return next();
-                }
-            }).catch((err) => {
-                 return res.json(err+"lỗi rồi")
-            });
-        } catch (error) {
-            return res.json({
-                err: "lỗi",
-                message: "lỗi tìm kiếm" + error,
-            })
-        }
-    }),
-    function(req, res) {
+});        
+router.get("/:id", checkAuth.checkAuthor, (req, res) => {
         var id = req.params.id;
-        console.log(id)
         userControl
             .getUserID(id)
             .then((data) => {
@@ -170,10 +128,8 @@ router.get("/:id/:token", function(req, res, next) {
             .catch((err) => {
                 return res.json(err);
             })
-    };
-
-
-    router.post("/sign-up", checkAuth.checkAuthEmail, function(req, res) {
+});
+router.post("/sign-up", checkAuth.checkAuthEmail, function(req, res) {
         var username = req.body.username;
         var email = req.body.email;
         var password = req.body.password;
@@ -207,11 +163,7 @@ router.get("/:id/:token", function(req, res, next) {
         })
 
     }),
-
-
-
-
-    router.post("/login", function(req, res) {
+router.post("/login", function(req, res) {
         var email = req.body.email;
         var password = req.body.password;
         userControl.checkEmail(email).then((user) => {
@@ -223,7 +175,7 @@ router.get("/:id/:token", function(req, res, next) {
             }
             bcrypt.compare(password, user.password).then(function(result) {
                 if (result) {
-                    var token = jwt.sign({ _id: user._id }, "nodemy", { expiresIn: "1d" });
+                    var token = jwt.sign({ _id: user._id }, "nodemy", { expiresIn: "3d" });
                     // giá trị mà mình sẽ sử dụng sau khi người dùng gửi lại mã token này
                     // privateKey: là thông tin khóa bí mật(khóa này không được tiết lộ ra ngoài)
                     // option: thông tin thuật toán mã hóa, ... thời gian tồn tại của token: expiresIn dưới dạng ms
@@ -247,26 +199,7 @@ router.get("/:id/:token", function(req, res, next) {
             })
         });
     }),
-    router.put("/:id/:token", (req, res, next) => {
-            try {
-                var token = req.params.token;
-                var decode = jwt.verify(token, "nodemy");
-                userControl.getUserID(decode._id).then((user) => {
-
-                    if (user._id == req.params.id || user.roles === "admin") {
-                        return next();
-                    }
-                }).catch((err) => {
-
-                });
-            } catch (error) {
-                return res.json({
-                    err: "lỗi",
-                    message: "lỗi tìm kiếm" + error,
-                })
-            }
-        },
-        function(req, res) {
+ router.put("/:id",checkAuth.checkAuthor, (req, res) => {
             var body = {};
             var id = req.params.id;
             if (req.body.email) body.email = req.body.email;
@@ -299,32 +232,7 @@ router.get("/:id/:token", function(req, res, next) {
                 });
 
         }),
-    router.delete("/:id/:token", (req, res, next) => {
-            try {
-                var token = req.params.token;
-                var decode = jwt.verify(token, "nodemy");
-                console.log(token)
-                userControl.getUserID(decode._id)
-                    .then((user) => {
-                        console.log(user)
-                        if (user._id == req.params.id || user.roles === "admin") {
-                            return next();
-                        }
-                    })
-                    .catch((err) => {
-
-                    });
-            } catch (error) {
-                res.json({
-                    err: "lỗi",
-                    message: "lỗi tìm kiếm" + error,
-                })
-            }
-
-        },
-
-        function(req, res) {
-
+router.delete("/:id",checkAuth.checkAuthor, (req, res) => {
             var id = req.params.id;
             userControl
                 .deleteUser(id)
@@ -342,6 +250,78 @@ router.get("/:id/:token", function(req, res, next) {
                     });
                 });
         })
+router.delete("/delete/:email",checkAuth.checkAuthor, async(req, res) => {
+            var email = req.params.email;
+        let user =await   userControl
+                .deleteUseremail(email)
+                return user
+                // .then((data) => {
+                //     console.log(data)
+                //     return res.json({
+                //         error: false,
+                //         messenge: "xóa thamhf công",
+                //     });
+                // })
+                // .catch((err) => {
+                //     return res.json({
+                //         error: true,
+                //         messenge: "no công" + err,
+                //     });
+                // });
+})
 
-
+var storage = multer.diskStorage({
+            destination: function (req, file, cb) {
+              cb(null, 'uploads')
+            },
+            filename: function (req, file, cb) {
+              cb(null,  Date.now()+ '-' + file.originalname)
+            }
+          })
+           
+          var upload = multer({ storage: storage })
+        
+        
+// router.post('/uploadfile', upload.single('myFile'), async(req, res, next) => {
+//         var img = req.body
+//         if (!file) {
+//             const error = new Error('Please upload a file')
+//             error.httpStatusCode = 400
+//             return next(error)
+//         }
+//        if(res.file){
+//         img.file = req.file
+//         let  keynameing = [file.filename]
+//          console.log(keynameing)
+        
+//         let dataimg =await  userControl.createUser(keynameing)
+//         console(dataimg,270)
+//         return dataimg
+//        }
+router.post('/uploadfile',upload.single('myFile'),async (req, res, next)=>{
+        try {
+          var data =req.body
+          console.log('ok');
+          console.log(req.file);
+          return res.redirect('http://localhost:3000/BookCreation')
+          return res.status(500).json({
+              data:'thành công  '
+          })
+          return
+          if(!data.name){
+            return res.status(500).json(sendError(CHECK_INPUT))
+          }
+          if(req.file){
+            data.file = req.file
+            var dev = process.env.NODE_ENV === "production" ?  process.env.HOST_DOMAIN : process.env.HOST_DOMAIN_DEV 
+            data.avatar = `${dev}/${req.file.destination}/${req.file.filename}`
+          }
+          var feedback = await feedbackModel.createUser(data)
+          return res.status(200).json(sendSuccess(SUCCESSFULLY_ADDED_FEEDBACK, feedback))
+        } catch (error) {
+            return res.status(500).json(sendError(SERVER_ERROR))
+        }
+    })
+// })
+     
 module.exports = router;

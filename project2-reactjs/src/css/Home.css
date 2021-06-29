@@ -14,7 +14,7 @@ td{
     /* display: flex !important; */
 }
 .option-home{
-    width: 150px;
+    width: 100%;
     display: flex !important;
     
 }
